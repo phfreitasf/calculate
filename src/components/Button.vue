@@ -1,27 +1,39 @@
 <template>
-  <button class="button" 
-  @click="$emit('onClick', label)"
-  :class="{operation, double, triple}">
-      {{label}}
+  <button
+    class="button"
+    @click="$emit('onClick', label)"
+    :class="{ operation, double, triple }"
+  >
+    {{ label }}
   </button>
 </template>
 
 <script>
 export default {
-  name: 'VButton',
+  name: "VButton",
+  input: 0,
   props: {
-    label : {},
-    operation: {type: Boolean},
-    double: {type: Boolean},
-    triple: {type: Boolean},
-  }
+    label: {},
+    operation: { type: Boolean },
+    double: { type: Boolean },
+    triple: { type: Boolean },
+    
+  },    
+
+mounted() {
+  window.addEventListener('keydown', function(event){
+      //console.log(event.key);
+      
+      console.log(event)
+  });
+},
 }
 </script>
 
 <style>
-:root{
-  --bg-button : #f0f0f0;
-  --border-button : solid 1px #888;
+:root {
+  --bg-button: #f0f0f0;
+  --border-button: solid 1px #888;
 }
 
 .button {
@@ -31,27 +43,26 @@ export default {
   border-right: var(--bg-button);
   border-bottom: var(--bg-button);
   outline: none;
-
 }
 
-.button:active{
+.button:active {
   background-color: #ccc;
 }
 
-.button.double{
+.button.double {
   grid-column: span 2;
 }
 
-.button.triple{
+.button.triple {
   grid-column: span 3;
 }
 
-.button.operation{
+.button.operation {
   background-color: #fa8231;
   color: #fff;
 }
 
-.button.operation:active{
+.button.operation:active {
   background-color: #fa8231cc;
 }
 </style>

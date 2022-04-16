@@ -1,6 +1,6 @@
 <template>
   <div class="calculator">
-    <VDisplay :valor="displayValue"></VDisplay>
+    <VDisplay v-bind:valor="displayValue" />
     <VButton label="AC" triple @onClick="clearMemory" />
     <VButton label="/" operation @onClick="setOperation" />
     <VButton label="7" @onClick="addDigit" />
@@ -26,35 +26,78 @@ import VDisplay from "../components/Display.vue";
 import VButton from "../components/Button.vue";
 
 export default {
-
-  data: function() {
+  data: function () {
     return {
       displayValue: "0",
-      clearDisplay: false,
+      clearDisplay: true,
       operation: null,
-      values: [0,0],
-      current: 0
-    }
+      values: [0, 0],
+      current: 0,
+      
+    };
   },
   name: "VCalculator",
   components: { VButton, VDisplay },
 
   methods: {
     clearMemory() {
-      Object.assign(this.$data,this.$options.data())
+      Object.assign(this.$data, this.$options.data());
     },
     setOperation(operation) {
-      
+      if (this.current === 0) {
+        this.operation = operation;
+        this.current = 1;
+        this.clearDisplay = true;
+      } else {
+        const equals = operation === "=";
+        const currentOperation = this.operation;
+
+        try {
+          this.values[0] = eval(
+            `${this.values[0]} ${currentOperation} ${this.values[1]}`
+          );
+        } catch (e) {
+          this.$emit("onError", e);
+        }
+
+        this.values[1] = 0
+
+        this.displayValue = this.values[0]
+        this.operation = equals ? null : operation
+        this.current = equals ? 0 : 1
+        this.clearDisplay = !equals
+      }
     },
     addDigit(n) {
       if (n === "." && this.displayValue.includes(".")) {
-        return
+        return;
       }
-  
-      const clearDisplay = this.clearDisplay === "0" || this.clearDisplay
 
+      const clearDisplay = this.clearDisplay === "0" || this.clearDisplay;
+      const currentValue = clearDisplay ? "" : this.displayValue;
+      const displayValue = currentValue + n;
+
+      this.displayValue = displayValue;
+      this.clearDisplay = false;
+
+      if (n !== ".") {
+        const i = this.current;
+        const newValue = parseFloat(displayValue);
+        this.values[i] = newValue;
+      }
     },
+
+
   },
+
+
+  // mounted() {
+  //   document
+  //     .getElementById("app")
+  //     .addEventListener("onkeydown", function (tecla) {
+  //       this.addDigit(tecla.key);
+  //     });
+  // },
 };
 </script>
 
