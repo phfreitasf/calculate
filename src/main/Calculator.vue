@@ -31,7 +31,7 @@ export default {
       displayValue: "0",
       clearDisplay: true,
       operation: null,
-      values: [0, 0],
+      values: [0, 0, 0],
       current: 0,
       
     };
