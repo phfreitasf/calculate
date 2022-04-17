@@ -48,9 +48,13 @@ export default {
         this.operation = operation;
         this.current = 1;
         this.clearDisplay = true;
+        this.displayValue = `${this.values[0]} ${this.operation}`
       } else {
         const equals = operation === "=";
+        const enter = operation === "Enter"
         const currentOperation = this.operation;
+        
+        this.displayValue = `${this.values[0]} ${this.operation} ${this.values[1]}`
 
         try {
           this.values[0] = eval(
@@ -62,9 +66,17 @@ export default {
 
         this.values[1] = 0
 
-        this.displayValue = this.values[0]
+        this.displayValue = this.values[0].toString()
+        
+        if(equals) {
         this.operation = equals ? null : operation
         this.current = equals ? 0 : 1
+        }
+        else if(enter) {
+        this.operation = enter ? null : operation
+        this.current = enter ? 0 : 1
+        }
+        
         this.clearDisplay = !equals
       }
     },
@@ -90,15 +102,23 @@ export default {
 
   },
 
-
-  // mounted() {
-  //   document
-  //     .getElementById("app")
-  //     .addEventListener("onkeydown", function (tecla) {
-  //       this.addDigit(tecla.key);
-  //     });
-  // },
-};
+  mounted() {
+    
+    window.addEventListener('keydown', event => {
+      //console.log(event.key);
+      let operations = ["/", "*","-","+","=", "Enter"]
+      if (!isNaN(event.key)){
+      this.addDigit(event.key)
+      }
+      else if(operations.includes(event.key))
+      {
+        this.setOperation(event.key)
+      }
+      // console.log(event)
+      // console.log(isNaN(event.key))
+    })
+  }
+}
 </script>
 
 <style>
